@@ -1,5 +1,6 @@
 using System;
 using PaymentContext.Domain.Entities;
+using PaymentContext.Domain.ValueObjects;
 
 public class PayPalPayment : Payment
     {
@@ -10,9 +11,9 @@ public class PayPalPayment : Payment
         decimal total,
         decimal totalPaid,
         string payer,
-        string email,
-        string document,
-        string address) : base (
+        Email email,
+        Document document,
+        Address address) : base (
             paidDate,
             expireDate,
             total,
