@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PaymentContext.Domain.Entities;
+using PaymentContext.Domain.ValueObjects;
 
 namespace PaymentContext.Tests
 {
@@ -9,9 +10,12 @@ namespace PaymentContext.Tests
         [TestMethod]
         public void AddSubscription()
         {
-            // var subscription = new Subscription(null);
-            // var student = new Student("Khayan Malantrucco", "12345678910", "khayanmalantrucco@gmail.com");
-            // student.AddSubscription(subscription);
+            var name = new Name("Khayan", "Malantrucco");
+            foreach (var not in name.Notifications)
+            {
+                // not.Property;
+                // not.Message;
+            }
         }
     }
 }
