@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Flunt.Validations;
 using PaymentContext.Domain.ValueObjects;
 using PaymentContext.Shared.Entities;
 
@@ -8,13 +9,13 @@ namespace PaymentContext.Domain.Entities
 {
     public class Student : Entity
     {
-        private IList<Subscription> _subscription;
+        private IList<Subscription> _subscriptions;
         public Student(Name name, Document document, Email email)
         {
             Name = name;
             Document = document;
             Email = email;
-            _subscription = new List<Subscription>();
+            _subscriptions = new List<Subscription>();
 
             AddNotifications(name, document, email);
         }
@@ -23,22 +24,32 @@ namespace PaymentContext.Domain.Entities
         public Document Document { get; private set; }
         public Email Email { get; private set; }
         public Address Address { get; private set; }
-        public IReadOnlyCollection<Subscription> Subscriptions { get { return _subscription.ToArray(); } }
+        public IReadOnlyCollection<Subscription> Subscriptions { get { return _subscriptions.ToArray(); } }
 
         public void AddSubscription(Subscription subscription)
         {
-            // Possíveis regras de negócio:
-                /*
-                    1. Se já tiver uma assinatura ativa, cancela a nova;
-                    2. Cancela todas as outras assinaturas e setta a nova como principal;
-                */
+            var hasSubscriptionActive = false;
 
-            foreach (var sub in Subscriptions)
+            foreach (var sub in _subscriptions)
             {
-                sub.Inactivate();
+                if (sub.Active)
+                {
+                    hasSubscriptionActive = true;
+                }
             }
 
-            _subscription.Add(subscription);
+            AddNotifications(new Contract()
+                .Requires()
+                .IsFalse(hasSubscriptionActive, "Student.Subscriptions", "Você já tem uma assinatura ativa.")
+            );
+
+            // Alternativa para o contrato:
+            /*
+                if (hasSubscriptionActive)
+                {
+                    AddNotifications("Student.Subscriptions", "Você já tem uma assinatura ativa.")
+                }
+            */
         }
     }
 }
