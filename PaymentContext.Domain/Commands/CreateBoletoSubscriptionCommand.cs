@@ -33,17 +33,22 @@ namespace PaymentContext.Domain.Commands
         public string Country { get; set; }
         public string ZipCode { get; set; }
 
-        // Fail Fast Validations
+        // Conceito: Fail Fast Validations + Commands
         /*
+            - Tudo o que entra na API é um JSON
             - Evita entrada de dados errados e/ou comprometidos na API
-            - Evita requisições ao BD a toa
+            - Evita requisições desnecessárias ao BD
+            - Se algo está errado/inválido, já volta o erro pro Cliente, nem chega na camada de domínio
+            - Economia de recursos da aplicação e do servidor
         */
+
         public void Validate()
         {
             AddNotifications(new Contract()
                 .Requires()
                 .HasMinLengthIfNotNullOrEmpty(FirstName, 3, "Name.FirstName", "Nome precisa ter pelo menos 3 caracteres.")
                 .HasMinLengthIfNotNullOrEmpty(LastName, 3, "Name.LastName", "Sobrenome precisa ter pelo menos 3 caracteres.")
+                .HasMaxLengthIfNotNullOrEmpty(FirstName, 40, "Name.FirstName", "Nome deve conter no máximo 40 caracteres.")
             );
         }
     }
